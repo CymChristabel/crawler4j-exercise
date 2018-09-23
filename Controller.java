@@ -21,6 +21,7 @@ public class Controller {
 		config.setCrawlStorageFolder(crawlStorageFolder);
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		config.setMaxPagesToFetch(maxPagesToFetch);
+		config.setIncludeBinaryContentInCrawling(true);
 		/* Instantiate the controller for crawl */
 		
 		PageFetcher pageFetcher = new PageFetcher(config);

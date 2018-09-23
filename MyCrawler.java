@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
-import edu.uci.ics.crawler4j.parser.BinaryParseData;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
@@ -13,10 +12,11 @@ public class MyCrawler extends WebCrawler {
     private final static Pattern FILTERS = Pattern.compile(
             ".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v" +
             "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-    private final static Pattern imgPatterns = Pattern.compile(".*(\\.(bmp|gif|jpeg|png|tiff?))$");
-
-    private MyCrawlStat myCrawlStat;
+    private final static Pattern filePattern = Pattern.compile(".*(\\.(pdf|doc|bmp|gif|jpeg|png|tiff?))$");
+    private final static String targetDomain = "https://www.chron.com";
     
+    private MyCrawlStat myCrawlStat;
+
     public MyCrawler() {
     	myCrawlStat = new MyCrawlStat();
 	}
@@ -25,14 +25,15 @@ public class MyCrawler extends WebCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url)
     {
     	String href = url.getURL().toLowerCase();
-    	if(imgPatterns.matcher(href).matches())
+    	if(href.startsWith(targetDomain))
     	{
-    		System.out.println(referringPage.getWebURL().getURL());
-    		System.out.println(href);
-    		System.out.println(referringPage.getContentType());
-    		System.out.println(referringPage.getContentData().length);
+    		myCrawlStat.addUrlsNewsSite(href, true);
     	}
-    	return !FILTERS.matcher(href).matches();
+    	else
+    	{
+    		myCrawlStat.addUrlsNewsSite(href, false);
+    	}
+    	return !FILTERS.matcher(href).matches() && href.startsWith(targetDomain);
     }
     
     @Override
@@ -41,28 +42,52 @@ public class MyCrawler extends WebCrawler {
     }
     
     @Override
+    protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
+    	// count the number of Urls that crawler trying to fetch
+    	String url = webUrl.getURL();
+    	myCrawlStat.addFetchNewsSite(url, statusCode);
+    	myCrawlStat.fetchAttemps = myCrawlStat.fetchAttemps + 1;
+    	if(statusCode % 100 == 2)
+    	{
+    		myCrawlStat.fetchSuccessd = myCrawlStat.fetchSuccessd + 1;
+    	}
+    	else
+    	{
+    		myCrawlStat.fetchFailedOrAborted = myCrawlStat.fetchFailedOrAborted + 1;
+    	}
+    	myCrawlStat.addStatusCode(statusCode, statusDescription);
+    }
+    
+    @Override
     public void visit (Page page)
     {
     	String url = page.getWebURL().getURL();
-    	if(imgPatterns.matcher(url).matches())
-    	{
-    		System.out.println(url);
-    		System.out.println(page.getContentData().length);
-    	}
+    	int fileSize = page.getContentData().length;
+    	String contentType = page.getContentType();
+
+    	// count total urls and content types encountered
+    	myCrawlStat.totalURLsExtracted = myCrawlStat.totalURLsExtracted + 1;
+    	myCrawlStat.addUniqueUrl(url, targetDomain);
+    	myCrawlStat.addEncounteredContentType(contentType);
+    	
+    	// handling html pages and files
     	if(page.getParseData() instanceof HtmlParseData)
     	{
     		HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-    		String text = htmlParseData.getText();
-    		String html = htmlParseData.getHtml();
     		Set<WebURL> links = htmlParseData.getOutgoingUrls();
+    		for(WebURL outgoingUrl : links)
+    		{
+    			myCrawlStat.addUniqueUrl(outgoingUrl.getURL(), targetDomain);
+    		}
     		links.add(page.getWebURL());
-//    		System.out.println("content-type:" + page.getContentType());
-//    		System.out.println("Status code:" + page.getStatusCode());
-//    		System.out.println("URL:" + page.getWebURL());
-//    		System.out.println("Text length: " + text.length());
-//    		System.out.println("Html length: " + html.length());
-//    		System.out.println("Number of outgoing links: " + links.size());
-//    		System.out.println("file size:" + html.getBytes());
+    		myCrawlStat.addVisitNewsSite(url, fileSize, htmlParseData.getOutgoingUrls().size(), contentType);
+    	}
+    	else
+    	{
+    		if(filePattern.matcher(url).matches())
+        	{
+        		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
+        	}
     	}
     }
 }
