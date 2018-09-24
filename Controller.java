@@ -140,6 +140,6 @@ public class Controller {
 			writer.writeNext(temp);
 		}
 		writer.close();
-		System.out.println("url_NewsSites.csv created, total row is " + Integer.toString(finalCrawlstat.visitNewsSite.size() + 1));
+		System.out.println("url_NewsSites.csv created, total row is " + Integer.toString(finalCrawlstat.urlsNewsSite.size() + 1));
 	}
 }
