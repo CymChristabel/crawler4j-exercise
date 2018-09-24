@@ -75,12 +75,39 @@ public class Controller {
 			 bWriter.newLine();
 			 
 			 // write file sizes
+			 // count different sizes
+			 int[] file_sizes = { 0, 0, 0, 0, 0 };
+			 for(MyVisitNewsSite visitNewsSite : myCrawlStat.visitNewsSite) {
+				 if(visitNewsSite.file_size < 1024) {
+					 file_sizes[0] = file_sizes[0] + 1;
+				 }
+				 else if(visitNewsSite.file_size < 1024 * 10 && visitNewsSite.file_size >= 1024) {
+					 file_sizes[1] = file_sizes[1] + 1;
+				 }
+				 else if(visitNewsSite.file_size < 1024 * 100 && visitNewsSite.file_size >= 1024 * 10) {
+					 file_sizes[2] = file_sizes[2] + 1;
+				 }
+				 else if(visitNewsSite.file_size < 1024 * 1000 && visitNewsSite.file_size <= 1024 * 100) {
+					 file_sizes[3] = file_sizes[3] + 1;
+				 }
+				 else {
+					 file_sizes[4] = file_sizes[4] + 1;
+				}
+			 }
 			 bWriter.write("File Sizes:");
 			 bWriter.newLine();
 			 bWriter.write("===========");
 			 bWriter.newLine();
-			 // TODO write file size
-			 
+			 bWriter.write("< 1KB: " + Integer.toString(file_sizes[0]));
+			 bWriter.newLine();
+			 bWriter.write("1KB ~ <10KB: " + Integer.toString(file_sizes[1]));
+			 bWriter.newLine();
+			 bWriter.write("10KB ~ < 100KB:" + Integer.toString(file_sizes[2]));
+			 bWriter.newLine();
+			 bWriter.write("100KB ~ <1MB: " + Integer.toString(file_sizes[3]));
+			 bWriter.newLine();
+			 bWriter.write(">= 1MB: " + Integer.toString(file_sizes[4]));
+			 bWriter.newLine();
 			 bWriter.newLine();
 			 
 			 // Write content types

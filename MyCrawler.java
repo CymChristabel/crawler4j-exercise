@@ -38,7 +38,7 @@ public class MyCrawler extends WebCrawler {
     
     @Override
     protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
-    	// count the number of Urls that crawler trying to fetch
+    	// count the number of URLs that crawler trying to fetch
     	String url = webUrl.getURL();
     	myCrawlStat.addFetchNewsSite(url, statusCode);
     	myCrawlStat.fetchAttemps = myCrawlStat.fetchAttemps + 1;
