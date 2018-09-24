@@ -42,7 +42,7 @@ public class MyCrawler extends WebCrawler {
     	String url = webUrl.getURL();
     	myCrawlStat.addFetchNewsSite(url, statusCode);
     	myCrawlStat.fetchAttemps = myCrawlStat.fetchAttemps + 1;
-    	if(statusCode % 100 == 2)
+    	if(statusCode / 100 == 2)
     	{
     		myCrawlStat.fetchSuccessd = myCrawlStat.fetchSuccessd + 1;
     	}
@@ -65,12 +65,12 @@ public class MyCrawler extends WebCrawler {
     	int fileSize = page.getContentData().length;
     	String contentType = page.getContentType();
 
-    	// count total urls and content types encountered
+    	// count total URLs and content types encountered
     	myCrawlStat.totalURLsExtracted = myCrawlStat.totalURLsExtracted + 1;
     	myCrawlStat.addUniqueUrl(url, targetDomain);
     	myCrawlStat.addEncounteredContentType(contentType);
     	
-    	// handling html pages and files
+    	// handling HTML pages and files
     	if(page.getParseData() instanceof HtmlParseData)
     	{
     		HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
