@@ -1,6 +1,7 @@
 package csci572hw2;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,9 +50,9 @@ public class MyCrawlStat {
 	public int uniqueURLsExtracted;
 	public int uniqueURlsWithin;
 	public int uniqueUrlsOutside;
-	public HashMap<String, Integer> statusCodes;
-	public HashMap<String, Boolean> urlEncountered;
-	public HashMap<String, Integer> contentTypeEncountered;
+	public Map<String, Integer> statusCodes;
+	public Map<String, Boolean> urlEncountered;
+	public Map<String, Integer> contentTypeEncountered;
 	
 	public MyCrawlStat() {
 		fetchNewsSite = new ArrayList<>();

@@ -37,11 +37,6 @@ public class MyCrawler extends WebCrawler {
     }
     
     @Override
-    public Object getMyLocalData() {
-    	return myCrawlStat;
-    }
-    
-    @Override
     protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
     	// count the number of Urls that crawler trying to fetch
     	String url = webUrl.getURL();
@@ -56,6 +51,11 @@ public class MyCrawler extends WebCrawler {
     		myCrawlStat.fetchFailedOrAborted = myCrawlStat.fetchFailedOrAborted + 1;
     	}
     	myCrawlStat.addStatusCode(statusCode, statusDescription);
+    }
+    
+    @Override
+    public MyCrawlStat getMyLocalData() {
+    	return myCrawlStat;
     }
     
     @Override
