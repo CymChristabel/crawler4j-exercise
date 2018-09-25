@@ -36,9 +36,9 @@ public class Controller {
     private static void writeCrawlReportNewsSite(String normalizedPath, MyCrawlStat myCrawlStat) {
     	try(BufferedWriter bWriter = new BufferedWriter(new FileWriter(normalizedPath))){
     		 // write general info
-			 bWriter.write("Name: Tommy Trojan");
+			 bWriter.write("Name: Yiming Cai");
 			 bWriter.newLine();
-			 bWriter.write("USC ID: ");
+			 bWriter.write("USC ID: 9217439878");
 			 bWriter.newLine();
 			 bWriter.write("News site crawled: " + HTTPS_PREFIX + "www." + TARGET_WEBSITE);
 			 bWriter.newLine();
@@ -153,9 +153,9 @@ public class Controller {
 	public static void main(String[] args) throws Exception {
 		// crawler4jl parameter
 		String crawlStorageFolder = "~/Projects/csci572hw2/data/crawl";
-		int numberOfCrawlers = 256;
+		int numberOfCrawlers = 1024;
 		int maxDepthOfCrawling = 16;
-		int maxPagesToFetch	= 1000;
+		int maxPagesToFetch	= 20000;
 		
 		CrawlConfig config  = new CrawlConfig();
 		config.setCrawlStorageFolder(crawlStorageFolder);

@@ -11,9 +11,9 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MyCrawler extends WebCrawler {
     private final static Pattern FILTERS = Pattern.compile(
-            ".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v" +
+            ".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|xml" +
             "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-    private final static Pattern FILEPATTERN = Pattern.compile(".*(\\.(pdf|doc|bmp|gif|jpeg|png|tiff?))$");
+    private final static Pattern FILEPATTERN = Pattern.compile(".*(\\.(pdf|doc|bmp|dib|pcp|dif|wmf|gif|jpg|png|jpeg))$");
     private final static String TARGET_WEBSITE = "chron.com";
     private final static String HTTP_PREFIX = "http://";
     private final static String HTTPS_PREFIX = "https://";
@@ -63,7 +63,7 @@ public class MyCrawler extends WebCrawler {
     {
     	String url = page.getWebURL().getURL();
     	int fileSize = page.getContentData().length;
-    	String contentType = page.getContentType();
+    	String contentType = page.getContentType().split("\\;", 2)[0] + ";";
     	
     	// count total URLs and content types encountered
     	myCrawlStat.addUniqueUrl(url);
@@ -84,7 +84,7 @@ public class MyCrawler extends WebCrawler {
     	}
     	else
     	{
-    		if(FILEPATTERN.matcher(url).matches())
+    		if(FILEPATTERN.matcher(url.toLowerCase()).matches())
         	{
         		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
         	}
