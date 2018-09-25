@@ -2,18 +2,9 @@ package csci572hw2;
 
 import java.util.List;
 import java.util.Map;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-class MyUrlsNewsSite {
-	public final String url;
-	public final boolean isResides;
-	
-	public MyUrlsNewsSite(String url, boolean isResides) {
-		this.url = url;
-		this.isResides = isResides;
-	}
-}
 
 class MyFetchNewsSite {
 	public final String url;
@@ -42,14 +33,10 @@ class MyVisitNewsSite {
 public class MyCrawlStat {
 	public List<MyFetchNewsSite> fetchNewsSite;
 	public List<MyVisitNewsSite> visitNewsSite;
-	public List<MyUrlsNewsSite> urlsNewsSite;
 	public int fetchAttemps;
 	public int fetchSuccessd;
 	public int fetchFailedOrAborted;
 	public int totalURLsExtracted;
-	public int uniqueURLsExtracted;
-	public int uniqueURlsWithin;
-	public int uniqueUrlsOutside;
 	public Map<String, Integer> statusCodes;
 	public Map<String, Boolean> urlEncountered;
 	public Map<String, Integer> contentTypeEncountered;
@@ -57,14 +44,10 @@ public class MyCrawlStat {
 	public MyCrawlStat() {
 		fetchNewsSite = new ArrayList<>();
 		visitNewsSite = new ArrayList<>();
-		urlsNewsSite = new ArrayList<>();
 		fetchAttemps = 0;
 		fetchSuccessd = 0;
 		fetchFailedOrAborted = 0;
 		totalURLsExtracted = 0;
-		uniqueURLsExtracted = 0;
-		uniqueUrlsOutside = 0;
-		uniqueURlsWithin = 0;
 		statusCodes = new HashMap<String, Integer>();
 		urlEncountered = new HashMap<String, Boolean>();
 		contentTypeEncountered = new HashMap<String, Integer>();
@@ -78,12 +61,8 @@ public class MyCrawlStat {
 		visitNewsSite.add(new MyVisitNewsSite(url, length, outlinks, content_type));
 	}
 	
-	public void addUrlsNewsSite(String url, Boolean isResides) {
-		urlsNewsSite.add(new MyUrlsNewsSite(url, isResides));
-	}
 	
-	public void addStatusCode(int statusCode, String statusDescription) {
-		String key = Integer.toString(statusCode) + ' ' + statusDescription;
+	public void addStatusCode(String key) {
 		if(statusCodes.get(key) == null) {
 			statusCodes.put(key, 1);
 		}
@@ -93,20 +72,8 @@ public class MyCrawlStat {
 		}
 	}
 	
-	public void addUniqueUrl(String url, String targetDomain){
-		if(urlEncountered.get(url) == null)
-    	{
-			uniqueURLsExtracted = uniqueURLsExtracted + 1;
-    		if(url.startsWith(targetDomain))
-    		{
-    			uniqueURlsWithin = uniqueURlsWithin + 1;
-    		}
-    		else
-    		{
-    			uniqueUrlsOutside = uniqueUrlsOutside + 1; 
-    		}
-    		urlEncountered.put(url, true);
-    	}
+	public void addUniqueUrl(String url){
+		urlEncountered.put(url, true);
 	}
 	
 	public void addEncounteredContentType(String contentType) {

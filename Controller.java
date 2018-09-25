@@ -24,7 +24,14 @@ public class Controller {
     private final static String CRAWLREPORT_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/CrawlReport_NewsSite.txt";
     
     // set web URL to crawl
-    private final static String TARGET_WEBSITE = "https://www.chron.com";
+    private final static String TARGET_WEBSITE = "chron.com";
+    private final static String HTTP_PREFIX = "http://";
+    private final static String HTTPS_PREFIX = "https://";
+    
+    private static boolean isResides(String URL) {
+   	 return URL.startsWith(HTTP_PREFIX + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + TARGET_WEBSITE)
+			|| URL.startsWith(HTTP_PREFIX + "www." + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + "www." + TARGET_WEBSITE);
+   }
     
     private static void writeCrawlReportNewsSite(String normalizedPath, MyCrawlStat myCrawlStat) {
     	try(BufferedWriter bWriter = new BufferedWriter(new FileWriter(normalizedPath))){
@@ -33,7 +40,7 @@ public class Controller {
 			 bWriter.newLine();
 			 bWriter.write("USC ID: ");
 			 bWriter.newLine();
-			 bWriter.write("News site crawled: " + TARGET_WEBSITE);
+			 bWriter.write("News site crawled: " + HTTPS_PREFIX + "www." + TARGET_WEBSITE);
 			 bWriter.newLine();
 			 bWriter.newLine();
     		 
@@ -57,9 +64,25 @@ public class Controller {
 			 bWriter.newLine();
 			 bWriter.write("Total URLs extracted: " + Integer.toString(myCrawlStat.totalURLsExtracted));
 			 bWriter.newLine();
-			 bWriter.write("# unique URLs extracted: " + Integer.toString(myCrawlStat.uniqueURLsExtracted));
+			 // get unique URLs
+			 int uniqueURLsExtracted = 0;
+			 int uniqueURLsWithin = 0;
+			 int uniqueURLsOutside = 0;
+			 for(Map.Entry<String, Boolean> entry : myCrawlStat.urlEncountered.entrySet()) {
+				 uniqueURLsExtracted = uniqueURLsExtracted + 1;
+				 if(isResides(entry.getKey())) {
+					 uniqueURLsWithin = uniqueURLsWithin + 1;
+				 }
+				 else {
+					 uniqueURLsOutside = uniqueURLsOutside + 1;
+				 }
+			 }
+			 
+			 bWriter.write("# unique URLs extracted: " + Integer.toString(uniqueURLsExtracted));
 			 bWriter.newLine();
-			 bWriter.write("# unique URLs within News Site: " + Integer.toString(myCrawlStat.uniqueURlsWithin));
+			 bWriter.write("# unique URLs within News Site: " + Integer.toString(uniqueURLsWithin));
+			 bWriter.newLine();
+			 bWriter.write("# unique URLs outside News Site: " + Integer.toString(uniqueURLsOutside));
 			 bWriter.newLine();
 			 bWriter.newLine();
 			 
@@ -130,9 +153,9 @@ public class Controller {
 	public static void main(String[] args) throws Exception {
 		// crawler4jl parameter
 		String crawlStorageFolder = "~/Projects/csci572hw2/data/crawl";
-		int numberOfCrawlers = 7;
+		int numberOfCrawlers = 256;
 		int maxDepthOfCrawling = 16;
-		int maxPagesToFetch	= 100;
+		int maxPagesToFetch	= 1000;
 		
 		CrawlConfig config  = new CrawlConfig();
 		config.setCrawlStorageFolder(crawlStorageFolder);
@@ -147,7 +170,7 @@ public class Controller {
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 		
 		
-		controller.addSeed(TARGET_WEBSITE);
+		controller.addSeed(HTTPS_PREFIX + "www." + TARGET_WEBSITE);
 		controller.start(MyCrawler.class, numberOfCrawlers);
 		
 		// work with statistic status
@@ -161,12 +184,8 @@ public class Controller {
 			finalCrawlstat.fetchSuccessd = finalCrawlstat.fetchSuccessd + crawlStat.fetchSuccessd;
 			finalCrawlstat.fetchFailedOrAborted = finalCrawlstat.fetchFailedOrAborted + crawlStat.fetchFailedOrAborted;
 			finalCrawlstat.totalURLsExtracted = finalCrawlstat.totalURLsExtracted + crawlStat.totalURLsExtracted;
-			finalCrawlstat.uniqueURLsExtracted = finalCrawlstat.uniqueURLsExtracted + crawlStat.uniqueURLsExtracted;
-			finalCrawlstat.uniqueUrlsOutside = finalCrawlstat.uniqueUrlsOutside + crawlStat.uniqueUrlsOutside;
-			finalCrawlstat.uniqueURlsWithin = finalCrawlstat.uniqueURlsWithin + crawlStat.uniqueURlsWithin;
 			finalCrawlstat.fetchNewsSite.addAll(crawlStat.fetchNewsSite);
 			finalCrawlstat.visitNewsSite.addAll(crawlStat.visitNewsSite);
-			finalCrawlstat.urlsNewsSite.addAll(crawlStat.urlsNewsSite);
 			
 			// merge statusCodes
 			for(Map.Entry<String, Integer> entry : crawlStat.statusCodes.entrySet()) {
@@ -179,7 +198,7 @@ public class Controller {
 					finalCrawlstat.statusCodes.put(key, finalCrawlstat.statusCodes.get(key) + value);
 				}
 			}
-			// merge encountered urls
+			// merge encountered URLs
 			for(Map.Entry<String, Boolean> entry : crawlStat.urlEncountered.entrySet()) {
 				String key = entry.getKey();
 				Boolean value = entry.getValue();
@@ -215,7 +234,7 @@ public class Controller {
 			writer.writeNext(temp);
 		}
 		writer.close();
-		System.out.println("fetch_NewsSite.csv created, total row is " + Integer.toString(finalCrawlstat.fetchNewsSite.size() + 1));
+		System.out.println("fetch_NewsSite.csv created, total row is " + Integer.toString(finalCrawlstat.fetchNewsSite.size()));
 		
 		// write visit_NewsSite.csv
 		normalizedPath = FilenameUtils.normalize(System.getProperty("user.home") + VISIT_NEWSSITE_PATH);
@@ -233,7 +252,7 @@ public class Controller {
 			writer.writeNext(temp);
 		}
 		writer.close();
-		System.out.println("visit_NewsSite.csv created, total row is " + Integer.toString(finalCrawlstat.visitNewsSite.size() + 1));
+		System.out.println("visit_NewsSite.csv created, total row is " + Integer.toString(finalCrawlstat.visitNewsSite.size()));
 		
 		//write urls_NewsSite.csv
 		normalizedPath = FilenameUtils.normalize(System.getProperty("user.home") + URLS_NEWSSITE_PATH);
@@ -246,12 +265,12 @@ public class Controller {
 		writer = new CSVWriter(new FileWriter(normalizedPath));
 		String[] urlNewsSiteHeader = { "URL", "Resides" };
 		writer.writeNext(urlNewsSiteHeader);
-		for(MyUrlsNewsSite myUrlsNewsSite : finalCrawlstat.urlsNewsSite) {
-			String[] temp = { myUrlsNewsSite.url, myUrlsNewsSite.isResides ? "OK" : "N_OK" };
+		for(Map.Entry<String, Boolean> entry : finalCrawlstat.urlEncountered.entrySet()) {
+			String[] temp = { entry.getKey(), isResides(entry.getKey()) ? "OK" : "N_OK" };
 			writer.writeNext(temp);
 		}
 		writer.close();
-		System.out.println("url_NewsSites.csv created, total row is " + Integer.toString(finalCrawlstat.urlsNewsSite.size() + 1));
+		System.out.println("url_NewsSites.csv created, total row is " + Integer.toString(finalCrawlstat.urlEncountered.size()));
 		
 		System.out.println("All csv files created");
 		

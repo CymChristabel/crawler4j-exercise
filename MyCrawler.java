@@ -8,12 +8,15 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
+
 public class MyCrawler extends WebCrawler {
     private final static Pattern FILTERS = Pattern.compile(
             ".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v" +
             "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-    private final static Pattern filePattern = Pattern.compile(".*(\\.(pdf|doc|bmp|gif|jpeg|png|tiff?))$");
-    private final static String targetDomain = "https://www.chron.com";
+    private final static Pattern FILEPATTERN = Pattern.compile(".*(\\.(pdf|doc|bmp|gif|jpeg|png|tiff?))$");
+    private final static String TARGET_WEBSITE = "chron.com";
+    private final static String HTTP_PREFIX = "http://";
+    private final static String HTTPS_PREFIX = "https://";
     
     private MyCrawlStat myCrawlStat;
 
@@ -21,19 +24,16 @@ public class MyCrawler extends WebCrawler {
     	myCrawlStat = new MyCrawlStat();
 	}
     
+    public boolean isResides(String URL) {
+    	 return URL.startsWith(HTTP_PREFIX + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + TARGET_WEBSITE)
+			|| URL.startsWith(HTTP_PREFIX + "www." + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + "www." + TARGET_WEBSITE);
+    }
+    
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url)
     {
-    	String href = url.getURL().toLowerCase();
-    	if(href.startsWith(targetDomain))
-    	{
-    		myCrawlStat.addUrlsNewsSite(href, true);
-    	}
-    	else
-    	{
-    		myCrawlStat.addUrlsNewsSite(href, false);
-    	}
-    	return !FILTERS.matcher(href).matches() && href.startsWith(targetDomain);
+    	String href = url.getURL();
+    	return !FILTERS.matcher(href).matches() && isResides(href);
     }
     
     @Override
@@ -50,7 +50,7 @@ public class MyCrawler extends WebCrawler {
     	{
     		myCrawlStat.fetchFailedOrAborted = myCrawlStat.fetchFailedOrAborted + 1;
     	}
-    	myCrawlStat.addStatusCode(statusCode, statusDescription);
+    	myCrawlStat.addStatusCode(Integer.toString(statusCode) + ' ' + statusDescription);
     }
     
     @Override
@@ -64,10 +64,9 @@ public class MyCrawler extends WebCrawler {
     	String url = page.getWebURL().getURL();
     	int fileSize = page.getContentData().length;
     	String contentType = page.getContentType();
-
+    	
     	// count total URLs and content types encountered
-    	myCrawlStat.totalURLsExtracted = myCrawlStat.totalURLsExtracted + 1;
-    	myCrawlStat.addUniqueUrl(url, targetDomain);
+    	myCrawlStat.addUniqueUrl(url);
     	myCrawlStat.addEncounteredContentType(contentType);
     	
     	// handling HTML pages and files
@@ -77,14 +76,15 @@ public class MyCrawler extends WebCrawler {
     		Set<WebURL> links = htmlParseData.getOutgoingUrls();
     		for(WebURL outgoingUrl : links)
     		{
-    			myCrawlStat.addUniqueUrl(outgoingUrl.getURL(), targetDomain);
+    			myCrawlStat.addUniqueUrl(outgoingUrl.getURL());
     		}
     		links.add(page.getWebURL());
+    		myCrawlStat.totalURLsExtracted = myCrawlStat.totalURLsExtracted + htmlParseData.getOutgoingUrls().size();
     		myCrawlStat.addVisitNewsSite(url, fileSize, htmlParseData.getOutgoingUrls().size(), contentType);
     	}
     	else
     	{
-    		if(filePattern.matcher(url).matches())
+    		if(FILEPATTERN.matcher(url).matches())
         	{
         		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
         	}
