@@ -110,7 +110,7 @@ public class Controller {
 				 else if(visitNewsSite.file_size < 1024 * 100 && visitNewsSite.file_size >= 1024 * 10) {
 					 file_sizes[2] = file_sizes[2] + 1;
 				 }
-				 else if(visitNewsSite.file_size < 1024 * 1000 && visitNewsSite.file_size <= 1024 * 100) {
+				 else if(visitNewsSite.file_size < 1024 * 1000 && visitNewsSite.file_size >= 1024 * 100) {
 					 file_sizes[3] = file_sizes[3] + 1;
 				 }
 				 else {

@@ -63,12 +63,10 @@ public class MyCrawler extends WebCrawler {
     {
     	String url = page.getWebURL().getURL();
     	int fileSize = page.getContentData().length;
-    	String contentType = page.getContentType().split("\\;", 2)[0] + ";";
+    	String contentType = page.getContentType().split("\\;", 2)[0];
     	
-    	// count total URLs and content types encountered
+    	// count total URLs 
     	myCrawlStat.addUniqueUrl(url);
-    	myCrawlStat.addEncounteredContentType(contentType);
-    	
     	// handling HTML pages and files
     	if(page.getParseData() instanceof HtmlParseData)
     	{
@@ -81,12 +79,14 @@ public class MyCrawler extends WebCrawler {
     		links.add(page.getWebURL());
     		myCrawlStat.totalURLsExtracted = myCrawlStat.totalURLsExtracted + htmlParseData.getOutgoingUrls().size();
     		myCrawlStat.addVisitNewsSite(url, fileSize, htmlParseData.getOutgoingUrls().size(), contentType);
+        	myCrawlStat.addEncounteredContentType(contentType);
     	}
     	else
     	{
     		if(FILEPATTERN.matcher(url.toLowerCase()).matches())
         	{
         		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
+            	myCrawlStat.addEncounteredContentType(contentType);
         	}
     	}
     }
