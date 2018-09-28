@@ -10,11 +10,11 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 
 public class MyCrawler extends WebCrawler {
-    private final static Pattern FILTERS = Pattern.compile(
-            ".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|xml" +
-            "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-    private final static Pattern FILEPATTERN = Pattern.compile(".*(\\.(pdf|doc|bmp|dib|pcp|dif|wmf|gif|jpg|png|jpeg))$");
-    private final static String TARGET_WEBSITE = "chron.com";
+	private static final Pattern filters = Pattern.compile(
+		        ".*(\\.(php|css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v" +
+		        "|rm|smil|wmv|swf|wma|zip|rar|gz|xml|ico|svg|json))$");
+    private final static Pattern FILEPATTERN = Pattern.compile(".*(\\.(html|pdf|doc|gif|png|jpeg))$");
+    private final static String TARGET_WEBSITE = "wsj.com";
     private final static String HTTP_PREFIX = "http://";
     private final static String HTTPS_PREFIX = "https://";
     
@@ -24,7 +24,7 @@ public class MyCrawler extends WebCrawler {
     	myCrawlStat = new MyCrawlStat();
 	}
     
-    public boolean isResides(String URL) {
+    private boolean isResides(String URL) {
     	 return URL.startsWith(HTTP_PREFIX + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + TARGET_WEBSITE)
 			|| URL.startsWith(HTTP_PREFIX + "www." + TARGET_WEBSITE) || URL.startsWith(HTTPS_PREFIX + "www." + TARGET_WEBSITE);
     }
@@ -33,7 +33,11 @@ public class MyCrawler extends WebCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url)
     {
     	String href = url.getURL();
-    	return !FILTERS.matcher(href).matches() && isResides(href);
+    	
+    	if(href.contains("/npage/")) {
+    		return false;
+    	}
+    	return (FILEPATTERN.matcher(href).matches() || !filters.matcher(href).matches()) && isResides(href);
     }
     
     @Override
@@ -64,7 +68,11 @@ public class MyCrawler extends WebCrawler {
     	String url = page.getWebURL().getURL();
     	int fileSize = page.getContentData().length;
     	String contentType = page.getContentType().split("\\;", 2)[0];
-    	
+    	if(contentType.equals("text/html") == false)
+    	{
+    		System.out.println(url);
+    		System.out.println(contentType);
+    	}
     	// count total URLs 
     	myCrawlStat.addUniqueUrl(url);
     	// handling HTML pages and files
@@ -83,11 +91,8 @@ public class MyCrawler extends WebCrawler {
     	}
     	else
     	{
-    		if(FILEPATTERN.matcher(url.toLowerCase()).matches())
-        	{
-        		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
-            	myCrawlStat.addEncounteredContentType(contentType);
-        	}
+    		myCrawlStat.addVisitNewsSite(url, fileSize, 0, contentType);
+        	myCrawlStat.addEncounteredContentType(contentType);
     	}
     }
 }

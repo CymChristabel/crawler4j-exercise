@@ -24,7 +24,7 @@ public class Controller {
     private final static String CRAWLREPORT_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/CrawlReport_NewsSite.txt";
     
     // set web URL to crawl
-    private final static String TARGET_WEBSITE = "chron.com";
+    private final static String TARGET_WEBSITE = "wsj.com";
     private final static String HTTP_PREFIX = "http://";
     private final static String HTTPS_PREFIX = "https://";
     
@@ -64,6 +64,7 @@ public class Controller {
 			 bWriter.newLine();
 			 bWriter.write("Total URLs extracted: " + Integer.toString(myCrawlStat.totalURLsExtracted));
 			 bWriter.newLine();
+			 
 			 // get unique URLs
 			 int uniqueURLsExtracted = 0;
 			 int uniqueURLsWithin = 0;
@@ -125,7 +126,7 @@ public class Controller {
 			 bWriter.newLine();
 			 bWriter.write("1KB ~ <10KB: " + Integer.toString(file_sizes[1]));
 			 bWriter.newLine();
-			 bWriter.write("10KB ~ < 100KB:" + Integer.toString(file_sizes[2]));
+			 bWriter.write("10KB ~ < 100KB: " + Integer.toString(file_sizes[2]));
 			 bWriter.newLine();
 			 bWriter.write("100KB ~ <1MB: " + Integer.toString(file_sizes[3]));
 			 bWriter.newLine();
@@ -156,14 +157,17 @@ public class Controller {
 		int numberOfCrawlers = 1024;
 		int maxDepthOfCrawling = 16;
 		int maxPagesToFetch	= 20000;
+		int politenessDelay = 200;
 		
 		CrawlConfig config  = new CrawlConfig();
 		config.setCrawlStorageFolder(crawlStorageFolder);
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		config.setMaxPagesToFetch(maxPagesToFetch);
 		config.setIncludeBinaryContentInCrawling(true);
-		/* Instantiate the controller for crawl */
+		config.setPolitenessDelay(politenessDelay);
+		config.setUserAgentString("Kumagawa");
 		
+		/* Instantiate the controller for crawl */
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
@@ -176,6 +180,7 @@ public class Controller {
 		// work with statistic status
 		MyCrawlStat finalCrawlstat = new MyCrawlStat();
 		List<Object> myCrawlStat = controller.getCrawlersLocalData();
+		
 		// merge all statistic from each crawlers
 		for(Object localData : myCrawlStat) {
 			// merge number and list
@@ -198,12 +203,14 @@ public class Controller {
 					finalCrawlstat.statusCodes.put(key, finalCrawlstat.statusCodes.get(key) + value);
 				}
 			}
+			
 			// merge encountered URLs
 			for(Map.Entry<String, Boolean> entry : crawlStat.urlEncountered.entrySet()) {
 				String key = entry.getKey();
 				Boolean value = entry.getValue();
 				finalCrawlstat.urlEncountered.put(key, value);
 			}
+			
 			// merge encountered content types
 			for(Map.Entry<String, Integer> entry : crawlStat.contentTypeEncountered.entrySet()) {
 				String key = entry.getKey();
