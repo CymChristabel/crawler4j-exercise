@@ -32,12 +32,9 @@ public class MyCrawler extends WebCrawler {
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url)
     {
-    	String href = url.getURL();
+    	String href = url.getURL().toLowerCase();
     	
-    	if(href.contains("/npage/")) {
-    		return false;
-    	}
-    	return (FILEPATTERN.matcher(href).matches() || !filters.matcher(href).matches()) && isResides(href);
+    	return (FILEPATTERN.matcher(href).matches() || !filters.matcher(href).matches()) && isResides(href) && !href.contains(".xml");
     }
     
     @Override

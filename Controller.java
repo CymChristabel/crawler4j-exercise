@@ -126,7 +126,7 @@ public class Controller {
 			 bWriter.newLine();
 			 bWriter.write("1KB ~ <10KB: " + Integer.toString(file_sizes[1]));
 			 bWriter.newLine();
-			 bWriter.write("10KB ~ < 100KB: " + Integer.toString(file_sizes[2]));
+			 bWriter.write("10KB ~ <100KB: " + Integer.toString(file_sizes[2]));
 			 bWriter.newLine();
 			 bWriter.write("100KB ~ <1MB: " + Integer.toString(file_sizes[3]));
 			 bWriter.newLine();
@@ -154,7 +154,7 @@ public class Controller {
 	public static void main(String[] args) throws Exception {
 		// crawler4jl parameter
 		String crawlStorageFolder = "~/Projects/csci572hw2/data/crawl";
-		int numberOfCrawlers = 1024;
+		int numberOfCrawlers = 7;
 		int maxDepthOfCrawling = 16;
 		int maxPagesToFetch	= 20000;
 		int politenessDelay = 200;
@@ -165,7 +165,7 @@ public class Controller {
 		config.setMaxPagesToFetch(maxPagesToFetch);
 		config.setIncludeBinaryContentInCrawling(true);
 		config.setPolitenessDelay(politenessDelay);
-		config.setUserAgentString("Kumagawa");
+		config.setUserAgentString("Ataraxia");
 		
 		/* Instantiate the controller for crawl */
 		PageFetcher pageFetcher = new PageFetcher(config);
