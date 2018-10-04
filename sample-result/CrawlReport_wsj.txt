@@ -1,0 +1,38 @@
+Name: Yiming Cai
+USC ID: 9217439878
+News site crawled: https://www.wsj.com
+
+Fetch Statistics:
+=================
+# fetches attempted: 20000
+# fetches succeeded: 18285
+# fetches failed or aborted: 1715
+
+Outgoing URLs:
+==============
+Total URLs extracted: 3493747
+# unique URLs extracted: 363004
+# unique URLs within News Site: 265799
+# unique URLs outside News Site: 97205
+
+Status Codes:
+=============
+302 Moved Temporarily: 274
+301 Moved Permanently: 1412
+200 OK: 18285
+404 Not Found: 28
+403 Forbidden: 1
+
+File Sizes:
+===========
+< 1KB: 0
+1KB ~ <10KB: 3
+10KB ~ <100KB: 1109
+100KB ~ <1MB: 14762
+>= 1MB: 2411
+
+Content Types:
+==============
+image/png: 3
+text/html: 18281
+application/pdf: 1
