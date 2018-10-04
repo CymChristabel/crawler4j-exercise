@@ -36,10 +36,6 @@ public class Controller {
     private static void writeCrawlReportNewsSite(String normalizedPath, MyCrawlStat myCrawlStat) {
     	try(BufferedWriter bWriter = new BufferedWriter(new FileWriter(normalizedPath))){
     		 // write general info
-			 bWriter.write("Name: Yiming Cai");
-			 bWriter.newLine();
-			 bWriter.write("USC ID: 9217439878");
-			 bWriter.newLine();
 			 bWriter.write("News site crawled: " + HTTPS_PREFIX + "www." + TARGET_WEBSITE);
 			 bWriter.newLine();
 			 bWriter.newLine();
