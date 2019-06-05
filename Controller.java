@@ -18,7 +18,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.apache.tika.io.FilenameUtils;
 
 public class Controller {
-	private final static String FETCH_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/fetch_NewsSite.csv";
+    private final static String FETCH_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/fetch_NewsSite.csv";
     private final static String VISIT_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/visit_NewsSite.csv";
     private final static String URLS_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/urls_NewsSite.csv";
     private final static String CRAWLREPORT_NEWSSITE_PATH = "/eclipse-workspace/csci572hw2/src/csci572hw2/CrawlReport_NewsSite.txt";
